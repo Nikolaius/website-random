@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1">
+    <title>Sandbox City</title>
+    <style>
+        .titlul
+        {
+            text-align: center;
+        }
+        .mehe
+        {
+            font-size: 300%;
+            color: blue;
+            background-color: yellow;
+        }
+        p
+        {
+            text-align: center;
+        }
+        .jclass
+        {
+            width: 30px;
+            height: 30px;
+        }
+        .shop
+        {
+            color: blue;
+            background-color: yellow;
+        }
+        .shopclass
+        {
+            width: 15px;
+            height: 15px;
+        }
+        .leave
+        {
+            color: green;
+            background-color: red;
+        }
+        #time
+        {
+            color: white;
+            background-color: green;
+        }
+    </style>
+    <script>
+        //Blocks:
+        //1.white block ------- https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png
+        //2.grass block ---- https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg
+        //3.chicken ----- https://image.emojipng.com/126/14279126.jpg
+        //4.wall ------ https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518
+        //5.water -------- https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png
+        //6.leaves ------ https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI
+        //7.wood ------- https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000
+        //8.flower --------- https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg
+        //9.human --------- https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png
+
+        //Living Things:
+        //1.chicken -------- https://image.emojipng.com/126/14279126.jpg
+        //2.human -------- https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png
+
+        //Standing on blocks:
+        //1.leaves -------- https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI
+        //2.flower ------- https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg
+        //3.grass -------- https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg
+
+        let world=['.'];
+        let livingthings=[0];
+        let type=['.'];
+        let name=['.'];
+        let beforeshop='';
+        let selecteditemshop='none';
+        let inshop=false;
+        let standingon=['.'];
+        let hour=8;
+        let minute=0;
+        day=true;
+        function time()
+        {
+            if(inshop==false)
+            {
+                if(minute>58)
+                {
+                    if(hour==21)
+                    {
+                        day=false;
+                        document.body.style.backgroundColor='black';
+                        document.getElementById('stil').innerHTML='<style>h3{color: white;}.titlul{color:white;}p{color:white;}h1{color:white;}</style>';
+                    }
+                    if(hour==5)
+                    {
+                        day=true;
+                        document.body.style.background='white';
+                        document.getElementById('stil').innerHTML='';
+                    }
+                    if(hour>22)
+                    {
+                        hour=0;
+                        minute=0;
+                    }
+                    else
+                    {
+                        hour++;
+                        minute=0;
+                    }
+                }
+                else
+                {
+                    minute++;
+                }
+                if(minute<10)
+                {
+                    document.getElementById('time').innerHTML='TIME '+hour+":0"+minute;
+                }
+                else
+                {
+                    document.getElementById('time').innerHTML='TIME '+hour+":"+minute;
+                }
+            }
+        }
+        function changetime()
+        {
+            let time=prompt('Insert the time you want to change to');
+            if(time==null){}else
+            {
+                let h='';
+                if(time.substring(1,2)==':')
+                {
+                    h=time.substring(0,1);
+                    time=time.slice(2);
+                }
+                else
+                {
+                    h=time.substring(0,2);
+                    time=time.slice(3);
+                }
+                let m='';
+                if(time.substring(0,1)=='0')
+                {
+                    time=time.slice(1);
+                    m=time.substring(0,1);
+                }
+                else
+                {
+                    m=time.substring(0,2);
+                }
+                hour=parseInt(h);
+                minute=parseInt(m);
+                if(hour>21 || hour<6)
+                {
+                    day=false;
+                    document.body.style.backgroundColor='black';
+                    document.getElementById('stil').innerHTML='<style>h3{color: white;}.titlul{color:white;}p{color:white;}h1{color:white;}</style>';
+                }
+                else
+                {
+                    day=true;
+                    document.body.style.backgroundColor='white';
+                    document.getElementById('stil').innerHTML='';
+                }
+            }
+        }
+        function move()
+        {
+            if(inshop==false)
+            {
+                if(livingthings.length!=1)
+                {
+                    let contor=1;
+                    while(contor<livingthings.length)
+                    {
+                        if(type[contor]=='https://image.emojipng.com/126/14279126.jpg')
+                        {
+                            if(day==true)
+                            {
+                                let ar=[1,1,1,1,2,2];
+                                let rand=Math.round(Math.random()*ar.length);
+                                if(ar[rand]==1)
+                                {
+                                    let left=true;
+                                    let up=true;
+                                    let right=true;
+                                    let down=true;
+                                    let contor1=1;
+                                    while(contor1<819)
+                                    {
+                                        if(livingthings[contor]==contor1)
+                                        {
+                                            left=false;
+                                            break;
+                                        }
+                                        contor1=contor1+43;
+                                    }
+                                    let contor2=1;
+                                    while(contor2<44)
+                                    {
+                                        if(livingthings[contor]==contor2)
+                                        {
+                                            up=false;
+                                            break;
+                                        }
+                                        contor2=contor2+1;
+                                    }
+                                    let contor3=43;
+                                    while(contor3<861)
+                                    {
+                                        if(livingthings[contor]==contor3)
+                                        {
+                                            right=false;
+                                            break;
+                                        }
+                                        contor3=contor3+43;
+                                    }
+                                    let contor4=818;
+                                    while(contor4<861)
+                                    {
+                                        if(livingthings[contor]==contor4)
+                                        {
+                                            down=false;
+                                            break;
+                                        }
+                                        contor4=contor4+1;
+                                    }
+                                    let cleft=parseInt(livingthings[contor])-1;
+                                    let cup=parseInt(livingthings[contor])-43;
+                                    let cright=parseInt(livingthings[contor])+1;
+                                    let cdown=parseInt(livingthings[contor])+43;
+
+                                    /////////////////////////////////////////////////////////////    DE UPDATAT
+                                    /////////////////////////////////////////////////////////////    DE UPDATAT
+                                    /////////////////////////////////////////////////////////////    DE UPDATAT
+
+                                    if(world[cleft]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[cleft]=='https://image.emojipng.com/126/14279126.jpg' || world[cleft]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[cleft]=='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000' || world[cleft]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                                    {
+                                        left=false;
+                                    }
+                                    if(world[cup]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[cup]=='https://image.emojipng.com/126/14279126.jpg' || world[cup]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[cup]=='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000' || world[cup]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                                    {
+                                        up=false;
+                                    }
+                                    if(world[cright]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[cright]=='https://image.emojipng.com/126/14279126.jpg' || world[cright]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[cright]=='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000' || world[cright]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                                    {
+                                        right=false;
+                                    }
+                                    if(world[cdown]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[cdown]=='https://image.emojipng.com/126/14279126.jpg' || world[cdown]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[cdown]=='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000' || world[cdown]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                                    {
+                                        down=false;
+                                    }
+                                    if(left==false && up==false && right==false && down==false){}
+                                    else
+                                    {
+                                        let arr=[];
+                                        if(left==true)
+                                        {
+                                            if(world[cleft]=='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg')
+                                            {
+                                                let contor5=1;
+                                                while(contor5<65)
+                                                {
+                                                    arr.push(1);
+                                                    contor5++;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                arr.push(1);
+                                                arr.push(1);
+                                                arr.push(1);
+                                                arr.push(1);
+                                            }
+                                        }
+                                        if(up==true)
+                                        {
+                                            if(world[cup]=='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg')
+                                            {
+                                                let contor5=1;
+                                                while(contor5<65)
+                                                {
+                                                    arr.push(2);
+                                                    contor5++;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                arr.push(2);
+                                                arr.push(2);
+                                                arr.push(2);
+                                                arr.push(2);
+                                            }
+                                        }
+                                        if(right==true)
+                                        {
+                                            if(world[cright]=='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg')
+                                            {
+                                                let contor5=1;
+                                                while(contor5<65)
+                                                {
+                                                    arr.push(3);
+                                                    contor5++;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                arr.push(3);
+                                                arr.push(3);
+                                                arr.push(3);
+                                                arr.push(3);
+                                            }
+                                        }
+                                        if(down==true)
+                                        {
+                                            if(world[cdown]=='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg')
+                                            {
+                                                let contor5=1;
+                                                while(contor5<65)
+                                                {
+                                                    arr.push(4);
+                                                    contor5++;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                arr.push(4);
+                                                arr.push(4);
+                                                arr.push(4);
+                                                arr.push(4);
+                                            }
+                                        }
+                                        let randd=Math.round(Math.random()*arr.length);
+                                        if(arr[randd]==1)
+                                        {
+                                            let exvalue=livingthings[contor];
+                                            livingthings[contor]=livingthings[contor]-1;
+
+                                            /////////////////////DE UPDATAT
+                                            /////////////////////DE UPDATAT
+                                            /////////////////////DE UPDATAT
+                                            let standin='';
+                                            let standdin='';
+                                            if(world[livingthings[contor]]=='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI')
+                                            {
+                                                standin='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                                            }
+                                            else
+                                            {
+                                                if(world[livingthings[contor]]=='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg')
+                                                {
+                                                    standin='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg';
+                                                }
+                                                else
+                                                {
+                                                    if(world[livingthings[contor]]=='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg')
+                                                    {
+                                                        standin='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                                                    }
+                                                    else
+                                                    {
+                                                        standin='none';
+                                                    }
+                                                }
+                                            }
+                                            world[livingthings[contor]]='https://image.emojipng.com/126/14279126.jpg';
+                                            if(standingon[contor]=='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI')
+                                            {
+                                                standdin='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                                                world[exvalue]='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                                            }
+                                            else
+                                            {
+                                                if(standingon[contor]=='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg')
+                                                {
+                                                    standdin='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg';
+                                                    world[exvalue]='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg';
+                                                }
+                                                else
+                                                {
+                                                    standdin='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png';
+                                                    world[exvalue]='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png';
+                                                }
+                                            }
+                                            standingon[contor]=standin;
+                                            document.getElementById('sq'+livingthings[contor]).src='https://image.emojipng.com/126/14279126.jpg';
+                                            document.getElementById('sq'+exvalue).src=standdin;
+                                        }
+                                        if(arr[randd]==2)
+                                        {
+                                            let exvalue=livingthings[contor];
+                                            livingthings[contor]=livingthings[contor]-43;
+
+                                            /////////////////////DE UPDATAT
+                                            /////////////////////DE UPDATAT
+                                            /////////////////////DE UPDATAT
+                                            let standin='';
+                                            let standdin='';
+                                            if(world[livingthings[contor]]=='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI')
+                                            {
+                                                standin='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                                            }
+                                            else
+                                            {
+                                                if(world[livingthings[contor]]=='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg')
+                                                {
+                                                    standin='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg';
+                                                }
+                                                else
+                                                {
+                                                    if(world[livingthings[contor]]=='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg')
+                                                    {
+                                                        standin='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                                                    }
+                                                    else
+                                                    {
+                                                        standin='none';
+                                                    }
+                                                }
+                                            }
+                                            world[livingthings[contor]]='https://image.emojipng.com/126/14279126.jpg';
+                                            if(standingon[contor]=='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI')
+                                            {
+                                                standdin='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                                                world[exvalue]='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                                            }
+                                            else
+                                            {
+                                                if(standingon[contor]=='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg')
+                                                {
+                                                    standdin='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg';
+                                                    world[exvalue]='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg';
+                                                }
+                                                else
+                                                {
+                                                    standdin='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png';
+                                                    world[exvalue]='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png';
+                                                }
+                                            }
+                                            standingon[contor]=standin;
+                                            document.getElementById('sq'+livingthings[contor]).src='https://image.emojipng.com/126/14279126.jpg';
+                                            document.getElementById('sq'+exvalue).src=standdin;
+                                        }
+                                        if(arr[randd]==3)
+                                        {
+                                            let exvalue=livingthings[contor];
+                                            livingthings[contor]=livingthings[contor]+1;
+
+                                            /////////////////////DE UPDATAT
+                                            /////////////////////DE UPDATAT
+                                            /////////////////////DE UPDATAT
+                                            let standin='';
+                                            let standdin='';
+                                            if(world[livingthings[contor]]=='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI')
+                                            {
+                                                standin='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                                            }
+                                            else
+                                            {
+                                                if(world[livingthings[contor]]=='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg')
+                                                {
+                                                    standin='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg';
+                                                }
+                                                else
+                                                {
+                                                    if(world[livingthings[contor]]=='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg')
+                                                    {
+                                                        standin='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                                                    }
+                                                    else
+                                                    {
+                                                        standin='none';
+                                                    }
+                                                }
+                                            }
+                                            world[livingthings[contor]]='https://image.emojipng.com/126/14279126.jpg';
+                                            if(standingon[contor]=='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI')
+                                            {
+                                                standdin='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                                                world[exvalue]='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                                            }
+                                            else
+                                            {
+                                                if(standingon[contor]=='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg')
+                                                {
+                                                    standdin='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg';
+                                                    world[exvalue]='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg';
+                                                }
+                                                else
+                                                {
+                                                    standdin='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png';
+                                                    world[exvalue]='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png';
+                                                }
+                                            }
+                                            standingon[contor]=standin;
+                                            document.getElementById('sq'+livingthings[contor]).src='https://image.emojipng.com/126/14279126.jpg';
+                                            document.getElementById('sq'+exvalue).src=standdin;
+                                        }
+                                        if(arr[randd]==4)
+                                        {
+                                            let exvalue=livingthings[contor];
+                                            livingthings[contor]=livingthings[contor]+43;
+
+                                            /////////////////////DE UPDATAT
+                                            /////////////////////DE UPDATAT
+                                            /////////////////////DE UPDATAT
+                                            let standin='';
+                                            let standdin='';
+                                            if(world[livingthings[contor]]=='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI')
+                                            {
+                                                standin='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                                            }
+                                            else
+                                            {
+                                                if(world[livingthings[contor]]=='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg')
+                                                {
+                                                    standin='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg';
+                                                }
+                                                else
+                                                {
+                                                    if(world[livingthings[contor]]=='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg')
+                                                    {
+                                                        standin='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                                                    }
+                                                    else
+                                                    {
+                                                        standin='none';
+                                                    }
+                                                }
+                                            }
+                                            world[livingthings[contor]]='https://image.emojipng.com/126/14279126.jpg';
+                                            if(standingon[contor]=='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI')
+                                            {
+                                                standdin='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                                                world[exvalue]='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                                            }
+                                            else
+                                            {
+                                                if(standingon[contor]=='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg')
+                                                {
+                                                    standdin='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg';
+                                                    world[exvalue]='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg';
+                                                }
+                                                else
+                                                {
+                                                    standdin='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png';
+                                                    world[exvalue]='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png';
+                                                }
+                                            }
+                                            standingon[contor]=standin;
+                                            document.getElementById('sq'+livingthings[contor]).src='https://image.emojipng.com/126/14279126.jpg';
+                                            document.getElementById('sq'+exvalue).src=standdin;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if(type[contor]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                        {
+
+                        }
+                        contor++;
+                    }
+                }
+            }
+        }
+        function display1()
+        {
+            let contor=1;
+            while(contor<861)
+            {
+                document.getElementById('sq'+contor).src=world[contor];
+                contor++;
+            }
+            inshop=false;
+        }
+        function display2()
+        {
+            let text='';
+            text=text+'<br><br><br><h1 class="titlul">Sandbox City</h1><br><br><hr>';
+            let contor1=1;
+            let numer=1;
+            while(contor1<21)
+            {
+                let contor2=1;
+                while(contor2<44)
+                {
+                    text=text+'<input type="image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png" id="sq'+numer+'" onclick="press('+numer+')" style="border: double;" class="jclass"/>';
+                    contor2++;
+                    numer++;
+                }
+                contor1++;
+            }
+            text=text+'<hr><button class="shop" onclick="shop()">SHOP</button><button class="leave" onclick="leave()">LEAVE</button><button id="time" onclick="changetime()">TIME 8:00</button><hr>';
+            document.getElementById('total').innerHTML=text;
+            display1();
+        }
+        function start()
+        {
+            let text='';
+            text=text+'<br><br><br><h1 class="titlul">Sandbox City</h1><br><br><hr>';
+            let contor1=1;
+            let numer=1;
+            while(contor1<21)
+            {
+                let contor2=1;
+                while(contor2<44)
+                {
+                    text=text+'<input type="image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png" id="sq'+numer+'" onclick="press('+numer+')" style="border: double;" class="jclass"/>';
+                    world.push('https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png');
+                    //FARA WORLD CAND COPIEZ IN DISPLAY2
+                    contor2++;
+                    numer++;
+                }
+                contor1++;
+            }
+            text=text+'<hr><button class="shop" onclick="shop()">SHOP</button><button class="leave" onclick="leave()">LEAVE</button><button id="time" onclick="changetime()">TIME 8:00</button><hr>';
+            document.getElementById('total').innerHTML=text;
+            setInterval(move,1000);
+            setInterval(time,1000);
+        }
+        function leave()
+        {
+            inshop=true;
+            let text='<h1>Leave</h1><hr><p>If you want to save your progress,save these texts and then after joing the game again press the continue button</p><p>';
+            let contor1=1;
+
+            /////////////////////////////////// DE UPDATAT
+                /////////////////////////////////// DE UPDATAT
+                /////////////////////////////////// DE UPDATAT
+
+            while(contor1<world.length)
+            {
+                if(contor1==431)
+                {
+                    text=text+'<br>';
+                }
+                if(world[contor1]=='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png')
+                {
+                    text=text+'1,';
+                }
+                if(world[contor1]=='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg')
+                {
+                    text=text+'2,';
+                }
+                if(world[contor1]=='https://image.emojipng.com/126/14279126.jpg')
+                {
+                    text=text+'3,';
+                }
+                if(world[contor1]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518')
+                {
+                    text=text+'4,';
+                }
+                if(world[contor1]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png')
+                {
+                    text=text+'5,';
+                }
+                if(world[contor1]=='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI')
+                {
+                    text=text+'6,';
+                }
+                if(world[contor1]=='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000')
+                {
+                    text=text+'7,';
+                }
+                if(world[contor1]=='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg')
+                {
+                    text=text+'8,';
+                }
+                if(world[contor1]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                {
+                    text=text+'9,';
+                }
+                contor1++;
+            }
+            text=text+'</p><p>';
+            let contor2=1;
+            if(livingthings.length==1)
+            {
+                text=text+'none';
+            }
+            while(contor2<livingthings.length)
+            {
+                text=text+livingthings[contor2]+',';
+                contor2++;
+            }
+            text=text+'</p><p>';
+            let contor3=1;
+            if(type.length==1)
+            {
+                text=text+'none';
+            }
+            while(contor3<type.length)
+            {
+                /////////////////////////////////// DE UPDATAT
+                /////////////////////////////////// DE UPDATAT
+                /////////////////////////////////// DE UPDATAT
+
+                if(type[contor3]=='https://image.emojipng.com/126/14279126.jpg')//living things
+                {
+                    text=text+'1,';
+                }
+                if(type[contor3]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                {
+                    text=text+'2,';
+                }
+                if(type[contor3]=='none')
+                {
+                    text=text+'0,';
+                }
+                contor3++;
+            }
+            text=text+'</p><hr>';
+            document.getElementById('total').innerHTML=text;
+        }
+        function shop()
+        {
+            document.getElementById('total').innerHTML='<h1>Shop</h1><button class="shop" onclick="display2()">EXIT</button><hr><h3>None <button onclick="selectshop(1)">SELECT</button></h3><hr><h3><input type="image" src="https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518" style="border: double;" class="shopclass"/> Wall <button onclick="selectshop(2)">SELECT</button></h3><hr><h3><input type="image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png" style="border: double;" class="shopclass"/> White Paint <button onclick="selectshop(3)">SELECT</button><hr><h3><input type="image" src="https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg" style="border: double;" class="shopclass"/> Grass <button onclick="selectshop(4)">SELECT</button></h3><hr><h3><input type="image" src="https://image.emojipng.com/126/14279126.jpg" style="border: double;" class="shopclass"/> Chicken <button onclick="selectshop(5)">SELECT</button></h3><hr><h3><input type="image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png" style="border: double;" class="shopclass"/> Water <button onclick="selectshop(6)">SELECT</button></h3><hr>'+
+
+            '<h3><input type="image" src="https://st2.depositphotos.com/1526816/5687/v/600/depositphotos_56876431-stock-illustration-tree.jpg" style="border: double;" class="shopclass"/> Tree <button onclick="selectshop(7)">SELECT</button></h3><hr><h3><input type="image" src="https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg" style="border: double;" class="shopclass"/> Grass 5*5 <button onclick="selectshop(8)">SELECT</button></h3><hr><h3><input type="image" src="https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg" style="border: double;" class="shopclass"/> Flower <button onclick="selectshop(9)">SELECT</button></h3><hr><h3><input type="image" src="https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png" style="border: double;" class="shopclass"/> Human <button onclick="selectshop(10)">SELECT</button></h3><hr>';
+            //<h3><input type="image" src="https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518" style="border: double;" class="shopclass"/> Wall <button onclick="selectshop(2)">SELECT</button></h3>
+            inshop=true;
+        }
+        function press(numar)
+        {
+            if(selecteditemshop!='none')
+            {
+
+                /////////////////////////////////// DE UPDATAT
+                /////////////////////////////////// DE UPDATAT
+                /////////////////////////////////// DE UPDATAT
+
+                if(selecteditemshop=='wall')
+                {
+                    if(world[numar]=='https://image.emojipng.com/126/14279126.jpg' || world[numar]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')//living things
+                    {
+                        let contor=1;
+                        while(contor<livingthings.length)
+                        {
+                            if(livingthings[contor]==numar)
+                            {
+                                livingthings[contor]=0;
+                                type[contor]='none';
+                                break;
+                            }
+                            contor++;
+                        }
+                    }
+                    document.getElementById('sq'+numar).src='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518';
+                    world[numar]='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518';
+                }
+                if(selecteditemshop=='whitepaint')
+                {
+                    if(world[numar]=='https://image.emojipng.com/126/14279126.jpg'){}
+                    else
+                    {
+                        document.getElementById('sq'+numar).src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png';
+                        world[numar]='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png';
+                    }
+                }
+                if(selecteditemshop=='grass')
+                {
+                    if(world[numar]=='https://image.emojipng.com/126/14279126.jpg'){}
+                    else
+                    {
+                        document.getElementById('sq'+numar).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                        world[numar]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    }
+                }
+                if(selecteditemshop=='chicken')
+                {
+
+                    ///////////////// DE UPDATAT
+                    ///////////////// DE UPDATAT
+                    ///////////////// DE UPDATAT
+
+                    if(world[numar]=='https://image.emojipng.com/126/14279126.jpg' || world[numar]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[numar]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[numar]=='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000' || world[numar]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png'){}
+                    else
+                    {
+                        document.getElementById('sq'+numar).src='https://image.emojipng.com/126/14279126.jpg';
+                        world[numar]='https://image.emojipng.com/126/14279126.jpg';
+                        livingthings.push(numar);
+                        type.push('https://image.emojipng.com/126/14279126.jpg');
+                        let ar=['p','c','i','a'];
+                        let rand1=Math.round(Math.random()*ar.length);
+                        let rand2=Math.round(Math.random()*ar.length);
+                        let rand3=Math.round(Math.random()*ar.length);
+                        
+                        let finalname=ar[rand1].toUpperCase()+ar[rand2]+ar[rand3]+'a';
+                        name.push(finalname);
+
+                        ///////////////// DE UPDATAT
+                        ///////////////// DE UPDATAT
+                        ///////////////// DE UPDATAT
+
+                        if(world[numar]=='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI')
+                        {
+                            standingon.push('https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI');
+                        }
+                        else
+                        {
+                            if(world[numar]=='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg')
+                            {
+                                standingon.push('https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg');
+                            }
+                            else
+                            {
+                                if(world[numar]=='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg')
+                                {
+                                    standingon.push('https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg');
+                                }
+                                else
+                                {
+                                    standingon.push('none');
+                                }
+                            }
+                        }
+                    }
+                }
+
+                ///////////////// DE UPDATAT
+                ///////////////// DE UPDATAT
+                ///////////////// DE UPDATAT
+
+                if(selecteditemshop=='water')
+                {
+                    if(world[numar]=='https://image.emojipng.com/126/14279126.jpg' || world[numar]=="https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png")//living things
+                    {
+                        let contor=1;
+                        while(contor<livingthings.length)
+                        {
+                            if(livingthings[contor]==numar)
+                            {
+                                livingthings[contor]=0;
+                                type[contor]='none';
+                                break;
+                            }
+                            contor++;
+                        }
+                    }
+                    document.getElementById('sq'+numar).src='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png';
+                    world[numar]='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png';
+                }
+                if(selecteditemshop=='tree')
+                {
+                    let b1=numar;let b2=numar-43;let b3=numar-86;let b4=numar-129;let b5=numar-172;let b6=numar-87;let b7=numar-88;let b8=numar-130;let b9=numar-85;let b10=numar-84;let b11=numar-128;
+                    let l1=true;let l2=true;let l3=true;let l4=true;let l5=true;
+                    let w1=true;let w2=true;let w3=true;let w4=true;let w5=true;
+                    let bb1=false;
+                    let bb2=false;
+                    let bb3=false;
+                    let bb4=false;
+                    let bb5=false;
+                    let bb6=false;
+                    let bb7=false;
+                    let bb8=false;
+                    let bb9=false;
+                    let bb10=false;
+                    let bb11=false;
+                    let contor1=1;
+                    while(contor1<44)
+                    {
+                        if(b1==contor1)
+                        {
+                            w4=false;
+                            w3=false;
+                            w2=false;
+                            w1=false;
+                            break;
+                        }
+                        contor1++;
+                    }
+                    if(!w4==false)
+                    {
+                        let contor2=1;
+                        while(contor2<44)
+                        {
+                            if(b2==contor2)
+                            {
+                                w3=false;
+                                w2=false;
+                                w1=false;
+                                break;
+                            }
+                            contor2++;
+                        }
+                    }
+                    if(!w3==false)
+                    {
+                        let contor3=1;
+                        while(contor3<44)
+                        {
+                            if(b3==contor3)
+                            {
+                                w2=false;
+                                w1=false;
+                                break;
+                            }
+                            contor3++;
+                        }
+                    }
+                    if(!w2==false)
+                    {
+                        let contor4=1;
+                        while(contor4<44)
+                        {
+                            if(b4==contor4)
+                            {
+                                w1=false;
+                                break;
+                            }
+                            contor4++;
+                        }
+                    }
+                    let contor5=1;
+                    while(contor5<819)
+                    {
+                        if(b1==contor5)
+                        {
+                            l2=false;
+                            l1=false;
+                            break;
+                        }
+                        contor5=contor5+43;
+                    }
+                    if(!l2==false)
+                    {
+                        let contor6=1;
+                        let nextto=b1-1;
+                        while(contor6<819)
+                        {
+                            if(nextto==contor6)
+                            {
+                                l1=false;
+                                break;
+                            }
+                            contor6=contor6+43;
+                        }
+                    }
+                    let contor7=43;
+                    while(contor7<861)
+                    {
+                        if(b1==contor7)
+                        {
+                            l4=false;
+                            l5=false;
+                            break;
+                        }
+                        contor7=contor7+43;
+                    }
+                    if(!l4==false)
+                    {
+                        let contor8=43;
+                        let nextto=b1+1;
+                        while(contor8<861)
+                        {
+                            if(nextto==contor8)
+                            {
+                                l5=false;
+                                break;
+                            }
+                            contor8=contor8+43;
+                        }
+                    }
+                    if(l3==true && w5==true)
+                    {
+                        bb1=true;
+                    }
+                    if(l3==true && w4==true)
+                    {
+                        bb2=true;
+                    }
+                    if(l3==true && w3==true)
+                    {
+                        bb3=true;
+                    }
+                    if(l3==true && w2==true)
+                    {
+                        bb4=true;
+                    }
+                    if(l3==true && w1==true)
+                    {
+                        bb5=true;
+                    }
+                    if(l2==true && w3==true)
+                    {
+                        bb6=true;
+                    }
+                    if(l1==true && w3==true)
+                    {
+                        bb7=true;
+                    }
+                    if(l2==true && w2==true)
+                    {
+                        bb8=true;
+                    }
+                    if(l4==true && w3==true)
+                    {
+                        bb9=true;
+                    }
+                    if(l5==true && w3==true)
+                    {
+                        bb10=true;
+                    }
+                    if(l4==true && w2==true)
+                    {
+                        bb11=true;
+                    }
+
+                    ///////////////////////////////////////        DE UPDATAT  !!!!!!!!!!!!!!!!!!!
+                    ///////////////////////////////////////        DE UPDATAT  !!!!!!!!!!!!!!!!!!!
+                    ///////////////////////////////////////        DE UPDATAT  !!!!!!!!!!!!!!!!!!!
+
+                    if(world[b4]=='https://image.emojipng.com/126/14279126.jpg' || world[b4]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b4]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b4]=='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000' || world[b4]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb4=false;
+                    }
+                    if(world[b5]=='https://image.emojipng.com/126/14279126.jpg' || world[b5]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b5]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b5]=='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000' || world[b5]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb5=false;
+                    }
+                    if(world[b6]=='https://image.emojipng.com/126/14279126.jpg' || world[b6]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b6]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b6]=='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000' || world[b6]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb6=false;
+                    }
+                    if(world[b7]=='https://image.emojipng.com/126/14279126.jpg' || world[b7]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b7]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b7]=='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000' || world[b7]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb7=false;
+                    }
+                    if(world[b8]=='https://image.emojipng.com/126/14279126.jpg' || world[b8]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b8]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b8]=='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000' || world[b8]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb8=false;
+                    }
+                    if(world[b9]=='https://image.emojipng.com/126/14279126.jpg' || world[b9]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b9]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b9]=='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000' || world[b9]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb9=false;
+                    }
+                    if(world[b10]=='https://image.emojipng.com/126/14279126.jpg' || world[b10]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b10]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b10]=='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000' || world[b10]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb10=false;
+                    }
+                    if(world[b11]=='https://image.emojipng.com/126/14279126.jpg' || world[b11]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b11]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b11]=='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000' || world[b11]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb11=false;
+                    }
+
+                    ///////////////////////////////////////        DE UPDATAT  !!!!!!!!!!!!!!!!!!!
+                    ///////////////////////////////////////        DE UPDATAT  !!!!!!!!!!!!!!!!!!!
+                    ///////////////////////////////////////        DE UPDATAT  !!!!!!!!!!!!!!!!!!!
+
+                    if(bb1==true)
+                    {
+                        if(world[b1]=='https://image.emojipng.com/126/14279126.jpg' || world[b1]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')//living things
+                        {
+                            let contor=1;
+                            while(contor<livingthings.length)
+                            {
+                                if(livingthings[contor]==b1)
+                                {
+                                    livingthings[contor]=0;
+                                    type[contor]='none';
+                                    break;
+                                }
+                                contor++;
+                            }
+                        }
+                    }
+                    if(bb2==true)
+                    {
+                        if(world[b2]=='https://image.emojipng.com/126/14279126.jpg' || world[b2]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')//living things
+                        {
+                            let contor=1;
+                            while(contor<livingthings.length)
+                            {
+                                if(livingthings[contor]==b2)
+                                {
+                                    livingthings[contor]=0;
+                                    type[contor]='none';
+                                    break;
+                                }
+                                contor++;
+                            }
+                        }
+                    }
+                    if(bb3==true)
+                    {
+                        if(world[b3]=='https://image.emojipng.com/126/14279126.jpg' || world[b3]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')//living things
+                        {
+                            let contor=1;
+                            while(contor<livingthings.length)
+                            {
+                                if(livingthings[contor]==b3)
+                                {
+                                    livingthings[contor]=0;
+                                    type[contor]='none';
+                                    break;
+                                }
+                                contor++;
+                            }
+                        }
+                    }
+                    //https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000
+                    //https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI
+                    if(bb1==true)
+                    {
+                        document.getElementById('sq'+b1).src='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000';
+                        world[b1]='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000';
+                    }
+                    if(bb2==true)
+                    {
+                        document.getElementById('sq'+b2).src='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000';
+                        world[b2]='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000';
+                    }
+                    if(bb3==true)
+                    {
+                        document.getElementById('sq'+b3).src='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000';
+                        world[b3]='https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000';
+                    }
+                    if(bb4==true)
+                    {
+                        document.getElementById('sq'+b4).src='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                        world[b4]='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                    }
+                    if(bb5==true)
+                    {
+                        document.getElementById('sq'+b5).src='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                        world[b5]='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                    }
+                    if(bb6==true)
+                    {
+                        document.getElementById('sq'+b6).src='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                        world[b6]='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                    }
+                    if(bb7==true)
+                    {
+                        document.getElementById('sq'+b7).src='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                        world[b7]='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                    }
+                    if(bb8==true)
+                    {
+                        document.getElementById('sq'+b8).src='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                        world[b8]='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                    }
+                    if(bb9==true)
+                    {
+                        document.getElementById('sq'+b9).src='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                        world[b9]='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                    }
+                    if(bb10==true)
+                    {
+                        document.getElementById('sq'+b10).src='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                        world[b10]='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                    }
+                    if(bb11==true)
+                    {
+                        document.getElementById('sq'+b11).src='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                        world[b11]='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI';
+                    }
+                }
+                if(selecteditemshop=='grass55')
+                {
+                    let b1=numar;let b2=numar+1;let b3=numar+2;let b4=numar-1;let b5=numar-2;let b6=numar-42;let b7=numar-41;let b8=numar-44;let b9=numar-45;let b10=numar-85;let b11=numar-84;let b12=numar-87;let b13=numar-88;let b14=numar+44;let b15=numar+45;let b16=numar+42;let b17=numar+41;let b18=numar+87;let b19=numar+88;let b20=numar+85;let b21=numar+84;let b22=numar-86;let b23=numar-43;let b24=numar+43;let b25=numar+86;
+                    let l1=true;let l2=true;let l3=true;let l4=true;let l5=true;let w1=true;let w2=true;let w3=true;let w4=true;let w5=true;
+                    let bb1=false;let bb2=false;let bb3=false;let bb4=false;let bb5=false;let bb6=false;let bb7=false;let bb8=false;let bb9=false;let bb10=false;let bb11=false;let bb12=false;let bb13=false;let bb14=false;let bb15=false;let bb16=false;let bb17=false;let bb18=false;let bb19=false;let bb20=false;let bb21=false;let bb22=false;let bb23=false;let bb24=false;let bb25=false;
+                    let contor1=1;
+                    while(contor1<44)
+                    {
+                        if(b1==contor1)
+                        {
+                            w2=false;
+                            w1=false;
+                            break;
+                        }
+                        contor1++;
+                    }
+                    if(!w2==false)
+                    {
+                        let contor2=1;
+                        while(contor2<44)
+                        {
+                            if(b23==contor2)
+                            {
+                                w1=false;
+                                break;
+                            }
+                            contor2++;
+                        }
+                    }
+                    let contor3=43;
+                    while(contor3<861)
+                    {
+                        if(b1==contor3)
+                        {
+                            l4=false;
+                            l5=false;
+                            break;
+                        }
+                        contor3=contor3+43;
+                    }
+                    if(!l4==false)
+                    {
+                        let contor4=43;
+                        while(contor4<861)
+                        {
+                            if(b2==contor4)
+                            {
+                                l5=false;
+                                break;
+                            }
+                            contor4=contor4+43;
+                        }
+                    }
+                    let contor5=818;
+                    while(contor5<861)
+                    {
+                        if(b1==contor5)
+                        {
+                            w4=false;
+                            w5=false;
+                            break;
+                        }
+                        contor5++;
+                    }
+                    if(!w4==false)
+                    {
+                        let contor6=818;
+                        while(contor6<861)
+                        {
+                            if(b24==contor6)
+                            {
+                                w5=false;
+                                break;
+                            }
+                            contor6++;
+                        }
+                    }
+                    let contor7=1;
+                    while(contor7<819)
+                    {
+                        if(b1==contor7)
+                        {
+                            l2=false;
+                            l1=false;
+                            break;
+                        }
+                        contor7=contor7+43;
+                    }
+                    if(!l2==false)
+                    {
+                        let contor8=1;
+                        while(contor8<819)
+                        {
+                            if(b4==contor8)
+                            {
+                                l1=false;
+                                break;
+                            }
+                            contor8=contor8+43;
+                        }
+                    }
+                    if(w1==true && l1==true){bb13=true;}
+                    if(w1==true && l2==true){bb12=true;}
+                    if(w1==true && l3==true){bb22=true;}
+                    if(w1==true && l4==true){bb10=true;}
+                    if(w1==true && l5==true){bb11=true;}
+                    if(w2==true && l1==true){bb9=true;}
+                    if(w2==true && l2==true){bb8=true;}
+                    if(w2==true && l3==true){bb23=true;}
+                    if(w2==true && l4==true){bb6=true;}
+                    if(w2==true && l5==true){bb7=true;}
+                    if(w3==true && l1==true){bb5=true;}
+                    if(w3==true && l2==true){bb4=true;}
+                    if(w3==true && l3==true){bb1=true;}
+                    if(w3==true && l4==true){bb2=true;}
+                    if(w3==true && l5==true){bb3=true;}
+                    if(w4==true && l1==true){bb17=true;}
+                    if(w4==true && l2==true){bb16=true;}
+                    if(w4==true && l3==true){bb24=true;}
+                    if(w4==true && l4==true){bb14=true;}
+                    if(w4==true && l5==true){bb15=true;}
+                    if(w5==true && l1==true){bb21=true;}
+                    if(w5==true && l2==true){bb20=true;}
+                    if(w5==true && l3==true){bb25=true;}
+                    if(w5==true && l4==true){bb18=true;}
+                    if(w5==true && l5==true){bb19=true;}
+
+                    ///////////////////////////////////////DE UPDATAT
+                    ///////////////////////////////////////DE UPDATAT
+                    ///////////////////////////////////////DE UPDATAT
+
+                    if(world[b1]=='https://image.emojipng.com/126/14279126.jpg' || world[b1]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b1]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b1]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb1=false;
+                    }
+                    if(world[b2]=='https://image.emojipng.com/126/14279126.jpg' || world[b2]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b2]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b2]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb2=false;
+                    }
+                    if(world[b3]=='https://image.emojipng.com/126/14279126.jpg' || world[b3]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b3]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b3]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb3=false;
+                    }
+                    if(world[b4]=='https://image.emojipng.com/126/14279126.jpg' || world[b4]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b4]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b4]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb4=false;
+                    }
+                    if(world[b5]=='https://image.emojipng.com/126/14279126.jpg' || world[b5]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b5]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b5]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb5=false;
+                    }
+                    if(world[b6]=='https://image.emojipng.com/126/14279126.jpg' || world[b6]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b6]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b6]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb6=false;
+                    }
+                    if(world[b7]=='https://image.emojipng.com/126/14279126.jpg' || world[b7]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b7]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b7]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb7=false;
+                    }
+                    if(world[b8]=='https://image.emojipng.com/126/14279126.jpg' || world[b8]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b8]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b8]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb8=false;
+                    }
+                    if(world[b9]=='https://image.emojipng.com/126/14279126.jpg' || world[b9]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b9]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b9]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb9=false;
+                    }
+                    if(world[b10]=='https://image.emojipng.com/126/14279126.jpg' || world[b10]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b10]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b10]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb10=false;
+                    }
+                    if(world[b11]=='https://image.emojipng.com/126/14279126.jpg' || world[b11]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b11]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b11]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb11=false;
+                    }
+                    if(world[b12]=='https://image.emojipng.com/126/14279126.jpg' || world[b12]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b12]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b12]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb12=false;
+                    }
+                    if(world[b13]=='https://image.emojipng.com/126/14279126.jpg' || world[b13]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b13]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b13]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb13=false;
+                    }
+                    if(world[b14]=='https://image.emojipng.com/126/14279126.jpg' || world[b14]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b14]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b14]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb14=false;
+                    }
+                    if(world[b15]=='https://image.emojipng.com/126/14279126.jpg' || world[b15]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b15]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b15]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb15=false;
+                    }
+                    if(world[b16]=='https://image.emojipng.com/126/14279126.jpg' || world[b16]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b16]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b16]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb16=false;
+                    }
+                    if(world[b17]=='https://image.emojipng.com/126/14279126.jpg' || world[b17]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b17]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b17]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb17=false;
+                    }
+                    if(world[b18]=='https://image.emojipng.com/126/14279126.jpg' || world[b18]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b18]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b18]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb18=false;
+                    }
+                    if(world[b19]=='https://image.emojipng.com/126/14279126.jpg' || world[b19]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b19]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b19]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb19=false;
+                    }
+                    if(world[b20]=='https://image.emojipng.com/126/14279126.jpg' || world[b20]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b20]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b20]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb20=false;
+                    }
+                    if(world[b21]=='https://image.emojipng.com/126/14279126.jpg' || world[b21]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b21]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b21]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb21=false;
+                    }
+                    if(world[b22]=='https://image.emojipng.com/126/14279126.jpg' || world[b22]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b22]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b22]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb22=false;
+                    }
+                    if(world[b23]=='https://image.emojipng.com/126/14279126.jpg' || world[b23]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b23]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b23]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb23=false;
+                    }
+                    if(world[b24]=='https://image.emojipng.com/126/14279126.jpg' || world[b24]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b24]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b24]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb24=false;
+                    }
+                    if(world[b25]=='https://image.emojipng.com/126/14279126.jpg' || world[b25]=='https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518' || world[b25]=='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png' || world[b25]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png')
+                    {
+                        bb25=false;
+                    }
+                    if(bb1==true){document.getElementById('sq'+b1).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b1]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb2==true){document.getElementById('sq'+b2).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b2]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb3==true){document.getElementById('sq'+b3).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b3]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb4==true){document.getElementById('sq'+b4).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b4]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb5==true){document.getElementById('sq'+b5).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b5]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb6==true){document.getElementById('sq'+b6).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b6]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb7==true){document.getElementById('sq'+b7).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b7]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb8==true){document.getElementById('sq'+b8).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b8]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb9==true){document.getElementById('sq'+b9).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b9]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb10==true){document.getElementById('sq'+b10).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b10]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb11==true){document.getElementById('sq'+b11).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b11]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb12==true){document.getElementById('sq'+b12).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b12]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb13==true){document.getElementById('sq'+b13).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b13]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb14==true){document.getElementById('sq'+b14).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b14]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb15==true){document.getElementById('sq'+b15).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b15]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb16==true){document.getElementById('sq'+b16).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b16]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb17==true){document.getElementById('sq'+b17).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b17]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb18==true){document.getElementById('sq'+b18).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b18]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb19==true){document.getElementById('sq'+b19).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b19]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb20==true){document.getElementById('sq'+b20).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b20]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb21==true){document.getElementById('sq'+b21).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b21]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb22==true){document.getElementById('sq'+b22).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b22]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb23==true){document.getElementById('sq'+b23).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b23]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb24==true){document.getElementById('sq'+b24).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b24]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                    if(bb25==true){document.getElementById('sq'+b25).src='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg';
+                    world[b25]='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg'}
+                }
+                if(selecteditemshop=='flower')
+                {
+                    ////////////////////////////// DE UPDATAT
+                    ////////////////////////////// DE UPDATAT
+                    ////////////////////////////// DE UPDATAT
+
+                    if(world[numar]=='https://image.emojipng.com/126/14279126.jpg' || world[numar]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png'){}
+                    else
+                    {
+                        document.getElementById('sq'+numar).src='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg';
+                        world[numar]='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg';
+                    }
+                }
+                if(selecteditemshop=='human')
+                {
+                    ////////////////////////////// DE UPDATAT
+                    ////////////////////////////// DE UPDATAT
+                    ////////////////////////////// DE UPDATAT
+
+                    if(world[numar]=='https://image.emojipng.com/126/14279126.jpg' || world[numar]=='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png'){}
+                    else
+                    {
+                        document.getElementById('sq'+numar).src='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png';
+                        world[numar]='https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png';
+                        livingthings.push(numar);
+                        type.push('https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png');
+                        let ar1=['a','e','i','o','u'];
+                        let ar2=['b','c','d','f','g','h','j','k','l','m','n','p','r','s','t','v','w','x','y','x'];
+                        let rand1=Math.round(Math.random()*ar2.length);
+                        let rand2=Math.round(Math.random()*ar1.length);
+                        let rand3=Math.round(Math.random()*ar2.length);
+                        let rand4=Math.round(Math.random()*ar1.length);
+                        let rand5=Math.round(Math.random()*ar2.length);
+                        let rand6=Math.round(Math.random()*ar1.length);
+                        let rand7=Math.round(Math.random()*ar2.length);
+                        let finalname=ar2[rand1].toUpperCase()+ar1[rand2]+ar2[rand3]+ar1[rand4]+ar2[rand5]+ar1[rand6]+ar2[rand7];
+                        name.push(finalname);
+
+                        ///////////////// DE UPDATAT
+                        ///////////////// DE UPDATAT
+                        ///////////////// DE UPDATAT
+
+                        if(world[numar]=='https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI')
+                        {
+                            standingon.push('https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI');
+                        }
+                        else
+                        {
+                            if(world[numar]=='https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg')
+                            {
+                                standingon.push('https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg');
+                            }
+                            else
+                            {
+                                if(world[numar]=='https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg')
+                                {
+                                    standingon.push('https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg');
+                                }
+                                else
+                                {
+                                    standingon.push('none');
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+
+            }
+        }
+        function selectshop(item)
+        {
+            if(item==1)
+            {
+                selecteditemshop='none';
+            }
+            if(item==2)
+            {
+                selecteditemshop='wall';
+            }
+            if(item==3)
+            {
+                selecteditemshop='whitepaint';
+            }
+            if(item==4)
+            {
+                selecteditemshop='grass';
+            }
+            if(item==5)
+            {
+                selecteditemshop='chicken';
+            }
+            if(item==6)
+            {
+                selecteditemshop='water';
+            }
+            if(item==7)
+            {
+                selecteditemshop='tree';
+            }
+            if(item==8)
+            {
+                selecteditemshop='grass55';
+            }
+            if(item==9)
+            {
+                selecteditemshop='flower';
+            }
+            if(item==10)
+            {
+                selecteditemshop='human';
+            }
+        }
+        function continue2()
+        {
+            let in1=String(document.getElementById('in1').value);
+            let in2=String(document.getElementById('in2').value);
+            let in3=String(document.getElementById('in3').value);
+            while(!in1=='')
+            {
+                let numar='';
+                while(in1.substring(0,1)!=',')
+                {
+                    if(in1.substring(0,1)==' ')
+                    {
+                        in1=in1.slice(1);
+                    }
+                    else
+                    {
+                        numar=numar+String(in1.substring(0,1));
+                        in1=in1.slice(1);
+                    }
+                }
+                in1=in1.slice(1);
+                let numer=parseInt(numar);
+                ////////////////// DE UPDATAT
+                 ////////////////// DE UPDATAT
+                  ////////////////// DE UPDATAT
+                
+                if(numer==1)
+                {
+                    world.push('https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Solid_white_bordered.svg/2048px-Solid_white_bordered.svg.png');
+                }
+                if(numer==2)
+                {
+                    world.push('https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg?cs=srgb&dl=pexels-pixmike-413195.jpg&fm=jpg');
+                }
+                if(numer==3)
+                {
+                    world.push('https://image.emojipng.com/126/14279126.jpg');
+                }
+                if(numer==4)
+                {
+                    world.push('https://media.istockphoto.com/photos/old-red-brick-wall-background-texture-picture-id619072518');
+                }
+                if(numer==5)
+                {
+                    world.push('https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/768px-Solid_blue.svg.png');
+                }
+                if(numer==6)
+                {
+                    world.push('https://media-exp1.licdn.com/dms/image/C561BAQGt-u1QcW89PA/company-background_10000/0/1572869704590?e=2147483647&v=beta&t=4CtLSjP5IV1DFPQJSRzHYaefykN4YpUaIWHwEpXaBcI');
+                }
+                if(numer==7)
+                {
+                    world.push('https://img.freepik.com/premium-photo/grunge-wood-panels-texture_174699-4.jpg?w=2000');
+                }
+                if(numer==8)
+                {
+                    world.push('https://cdn.britannica.com/45/5645-050-B9EC0205/head-treasure-flower-disk-flowers-inflorescence-ray.jpg');
+                }
+                if(numer==9)
+                {
+                    world.push('https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png');
+                }
+            }
+            while(!in2=='')
+            {
+                if(in2=='none')
+                {
+                    break;
+                }
+                let numar='';
+                while(in2.substring(0,1)!=',')
+                {
+                    if(in2.substring(0,1)==' ')
+                    {
+                        in2=in2.slice(1);
+                    }
+                    else
+                    {
+                        numar=numar+String(in2.substring(0,1));
+                        in2=in2.slice(1);
+                    }
+                }
+                in2=in2.slice(1);
+                let numer=parseInt(numar);
+                livingthings.push(numer);
+            }
+            while(!in3=='')
+            {
+                if(in3=='none')
+                {
+                    break;
+                }
+                let numar='';
+                while(in3.substring(0,1)!=',')
+                {
+                    if(in3.substring(0,1)==' ')
+                    {
+                        in3=in3.slice(1);
+                    }
+                    else
+                    {
+                        if(in3.substring(0,1)=='0')
+                        {
+                            in3=in3.slice(1);
+                        }
+                        else
+                        {
+                            numar=numar+String(in3.substring(0,1));
+                            in3=in3.slice(1);
+                        }
+                    }
+                }
+                in3=in3.slice(1);
+                let numer=parseInt(numar);
+
+                /////////////////////////DE UPDATAT
+                /////////////////////////DE UPDATAT
+                /////////////////////////DE UPDATAT
+             
+                if(numer==1)
+                {
+                    type.push('https://image.emojipng.com/126/14279126.jpg');
+                }
+                if(numer==2)
+                {
+                    type.push('https://images.emojiterra.com/twitter/v13.1/512px/1f9cd.png');
+                }
+            }
+            display2();
+            setInterval(move,1000);
+        }
+        function continuee()
+        {
+            /////////////////////////DE UPDATAT
+            /////////////////////////DE UPDATAT
+            /////////////////////////DE UPDATAT
+
+            document.getElementById('total').innerHTML='<h1>Continue</h1><hr><h3>Put the texts that you got last time in this inputs</h3><br><input id="in1"><br><input id="in2"><br><input id="in3"><br><button class="shop" onclick="continue2()">DONE</button><hr>';
+        }
+    </script>
+</head>
+<body>
+    <div id="total">
+    <br><br><br><h1 class="titlul">Sandbox City</h1>
+    <br><br><br><br><br><br><br><br><br><p><button class="mehe" onclick="start()">NEW GAME</button><br><button class="mehe" onclick="continuee()">CONTINUE</button></p>
+    </div>
+    <div id="stil">
+    </div>
+</body>
+</html>
